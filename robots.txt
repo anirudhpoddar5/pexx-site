@@ -5,19 +5,5 @@ Allow: /
 # /posts/ holds headless HTML fragments loaded by the journal's JS.
 # They render as thin, title-less pages if indexed directly.
 Disallow: /posts/
-# Repo docs (AGENTS.md, CLAUDE.md, README.md) get served by GitHub Pages
-# from the repo root. They are internal ops notes, not site content.
-Disallow: /*.md$
-
-# Apply the same exclusions to search and AI crawlers. A named user-agent
-# group would replace, rather than inherit, these wildcard rules.
-# This file guides crawling; it does not protect private files or remove URLs
-# already indexed. Keep internal material out of the publication artifact.
-Disallow: /.agents/
-Disallow: /.claude/
-Disallow: /content-drafts/
-Disallow: /out/
-Disallow: /outputs/
-Disallow: /pexx-shopify/
 
 Sitemap: https://www.poddarexp.com/sitemap.xml

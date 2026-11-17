@@ -657,12 +657,13 @@
       const params = new URLSearchParams(window.location.search);
       const postId = params.get('id');
       const postSlug = params.get('slug');
-      const basePath = window.location.pathname.replace(/\/blog\/post\.html$/, '/');
+      // Asset paths come from data/posts.json and are root-relative (e.g. /posts/x.html).
+      // Resolve against this site's own origin only, so a crafted URL cannot redirect
+      // the fetch or image load to another host (e.g. "//evil.example/...").
       const resolveAssetPath = (path) => {
         if (!path) return '';
-        if (/^(https?:)?\/\//.test(path)) return path;
-        if (path.startsWith('/')) return basePath.replace(/\/$/, '') + path;
-        return new URL(path, window.location.href).href;
+        const url = new URL(path, window.location.origin + '/');
+        return url.origin === window.location.origin ? url.href : '';
       };
       const formatDate = (dateString) => new Date(dateString + 'T00:00:00').toLocaleDateString('en-US', {
         year: 'numeric',
@@ -791,7 +792,9 @@
             ].join('')).join('');
           }
 
-          return fetch(resolveAssetPath(post.file));
+          const fileUrl = resolveAssetPath(post.file);
+          if (!fileUrl) throw new Error('Invalid post file path');
+          return fetch(fileUrl);
         })
         .then((response) => {
           if (!response) return null;
